@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Usahawan Cilik - Datuk Yi Ying</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Google Fonts: Fredoka & Nunito for playful cartoon look -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'cartoon-yellow': '#FFDE59',
+                        'cartoon-red': '#FF5757',
+                        'cartoon-blue': '#38B6FF',
+                        'cartoon-green': '#00C2CB',
+                        'cartoon-purple': '#8C52FF',
+                        'cartoon-orange': '#FF914D'
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        nunito: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #F4F9FF;
+            background-image: radial-gradient(#38b6ff22 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Fredoka', cursive;
+        }
+        .awning-stripe {
+            background: repeating-linear-gradient(
+                -45deg,
+                #FF5757,
+                #FF5757 25px,
+                #FFFFFF 25px,
+                #FFFFFF 50px
+            );
+        }
+        .card-3d {
+            box-shadow: 0 8px 0 #CBD5E1;
+            transition: all 0.2s ease;
+        }
+        .card-3d:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 11px 0 #CBD5E1;
+        }
+        .card-3d:active {
+            transform: translateY(2px);
+            box-shadow: 0 4px 0 #CBD5E1;
+        }
+        .btn-cartoon-yellow {
+            background-color: #FFDE59;
+            box-shadow: 0 5px 0 #DDA900;
+            color: #4A3B00;
+        }
+        .btn-cartoon-yellow:hover { background-color: #FFE680; }
+        .btn-cartoon-yellow:active { transform: translateY(3px); box-shadow: 0 2px 0 #DDA900; }
+
+        .btn-cartoon-blue {
+            background-color: #38B6FF;
+            box-shadow: 0 5px 0 #007CC4;
+            color: white;
+        }
+        .btn-cartoon-blue:hover { background-color: #52C2FF; }
+        .btn-cartoon-blue:active { transform: translateY(3px); box-shadow: 0 2px 0 #007CC4; }
+
+        .btn-cartoon-green {
+            background-color: #00C2CB;
+            box-shadow: 0 5px 0 #00878E;
+            color: white;
+        }
+        .btn-cartoon-green:hover { background-color: #1AD5DE; }
+        .btn-cartoon-green:active { transform: translateY(3px); box-shadow: 0 2px 0 #00878E; }
+
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.05); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between selection:bg-yellow-300">
+
+    <div id="app" class="flex-grow flex flex-col">
+        <!-- Top Canopy Header (TEMA KEDAI / AWNING) -->
+        <header class="relative bg-white border-b-4 border-slate-700 shadow-md">
+            <div class="awning-stripe h-6 w-full border-b-2 border-red-700"></div>
+            <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+                
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3 cursor-pointer" @click="activeTab = 'story'">
+                    <div class="w-12 h-12 bg-cartoon-yellow rounded-2xl border-2 border-slate-800 flex items-center justify-center text-2xl shadow-sm animate-float">
+                        🤖
+                    </div>
+                    <div>
+                        <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">BM Tahun 5 - KBAT</span>
+                        <h1 class="text-xl md:text-2xl font-bold text-slate-800 leading-tight">
+                            Usahawan Cilik: <span class="text-cartoon-blue">Datuk Yi Ying</span>
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Game Stats Bar -->
+                <div class="flex items-center space-x-3 bg-amber-50 px-4 py-2 rounded-2xl border-2 border-amber-300">
+                    <div class="flex items-center space-x-1" title="Jumlah Bintang KBAT">
+                        <i class="fa-solid fa-star text-yellow-500 text-lg"></i>
+                        <span class="font-bold text-amber-900 text-lg">{{ totalStars }}</span>
+                    </div>
+                    <div class="h-5 w-0.5 bg-amber-300"></div>
+                    <div class="flex items-center space-x-1" title="Mata Keusahawanan">
+                        <i class="fa-solid fa-coins text-amber-500 text-lg"></i>
+                        <span class="font-bold text-amber-900 text-lg">{{ score }}</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Navigation Bar -->
+            <nav class="bg-slate-800 text-white px-4">
+                <div class="max-w-6xl mx-auto flex overflow-x-auto space-x-2 py-2 no-scrollbar">
+                    <button @click="activeTab = 'story'" :class="activeTab === 'story' ? 'bg-cartoon-blue font-bold border-2 border-white' : 'hover:bg-slate-700'" class="px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2 whitespace-nowrap">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>1. Baca Petikan</span>
+                    </button>
+
+                    <button @click="activeTab = 'quiz'" :class="activeTab === 'quiz' ? 'bg-cartoon-yellow text-slate-900 font-bold border-2 border-slate-900' : 'hover:bg-slate-700'" class="px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2 whitespace-nowrap relative">
+                        <i class="fa-solid fa-brain"></i>
+                        <span>2. Cabaran KBAT</span>
+                        <span v-if="completedQuizzes.length > 0" class="w-2.5 h-2.5 bg-green-400 rounded-full"></span>
+                    </button>
+
+                    <button @click="activeTab = 'sim'" :class="activeTab === 'sim' ? 'bg-cartoon-green font-bold border-2 border-white' : 'hover:bg-slate-700'" class="px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2 whitespace-nowrap">
+                        <i class="fa-solid fa-store"></i>
+                        <span>3. Game Kedai & Kilang</span>
+                    </button>
+
+                    <button @click="activeTab = 'vocab'" :class="activeTab === 'vocab' ? 'bg-cartoon-purple font-bold border-2 border-white' : 'hover:bg-slate-700'" class="px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2 whitespace-nowrap">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>4. Kad Perkataan</span>
+                    </button>
+
+                    <button @click="activeTab = 'cert'" :class="activeTab === 'cert' ? 'bg-cartoon-orange font-bold border-2 border-white' : 'hover:bg-slate-700'" class="px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2 whitespace-nowrap">
+                        <i class="fa-solid fa-award"></i>
+                        <span>5. Sijil Usahawan</span>
+                    </button>
+
+                    <button @click="openLinkModal" class="bg-amber-500 hover:bg-amber-600 font-bold border-2 border-white px-4 py-2 rounded-xl text-sm transition flex items-center space-x-2 whitespace-nowrap">
+                        <i class="fa-solid fa-link"></i>
+                        <span>🔗 Cipta Pautan</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- MAIN CONTAINER -->
+        <main class="max-w-6xl w-full mx-auto p-4 md:p-6 flex-grow">
+
+            <!-- Shared Banner Notification -->
+            <div v-if="sharedBanner" class="mb-4 bg-emerald-100 border-2 border-emerald-400 text-emerald-900 p-4 rounded-2xl flex justify-between items-center animate-bounce">
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">🎉</span>
+                    <div>
+                        <strong class="font-bold">Pautan Dikongsi Dimuatkan!</strong>
+                        <p class="text-xs">Selamat datang, {{ studentName }}! Pencapaian dan Sijil anda sedia dipaparkan.</p>
+                    </div>
+                </div>
+                <button @click="sharedBanner = false" class="text-emerald-700 font-bold px-2 py-1">✕</button>
+            </div>
+
+            <!-- TAB 1: STORY / READING PAGE -->
+            <div v-if="activeTab === 'story'" class="space-y-6">
+                
+                <!-- Robot Banner -->
+                <div class="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl p-5 text-white shadow-lg border-4 border-slate-800 flex flex-col sm:flex-row items-center gap-4">
+                    <div class="w-20 h-20 bg-white rounded-2xl border-4 border-slate-800 flex-shrink-0 flex items-center justify-center text-4xl shadow-inner animate-float">
+                        🤖
+                    </div>
+                    <div class="flex-grow text-center sm:text-left">
+                        <div class="bg-yellow-300 text-slate-900 font-bold px-3 py-1 rounded-full text-xs inline-block mb-1">
+                            ARAHAN & NOTA GURU (3.2.2)
+                        </div>
+                        <h2 class="text-2xl font-bold">Tulis jawapan dan alasan!</h2>
+                        <p class="text-blue-100 text-sm md:text-base">
+                            Mari ikuti kisah Yi Ying melawat Galeri Jualan Datuknya. Baca petikan di bawah, kemudian klik pada perkataan berwarna untuk melihat maksudnya!
+                        </p>
+                    </div>
+                    <button @click="speakText(fullStoryText)" class="btn-cartoon-yellow font-bold px-4 py-3 rounded-2xl flex items-center space-x-2 border-2 border-slate-800">
+                        <i class="fa-solid fa-volume-high text-xl"></i>
+                        <span>Baca Teks</span>
+                    </button>
+                </div>
+
+                <!-- Main Story Board -->
+                <div class="bg-amber-50 rounded-3xl p-6 md:p-8 border-4 border-amber-200 shadow-lg relative">
+                    <div class="absolute -top-4 left-8 bg-red-500 text-white font-bold px-6 py-1 rounded-full border-2 border-slate-800 shadow">
+                        PETIKAN UTAMA
+                    </div>
+
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-center text-amber-900 mt-2 mb-6">
+                        🏬 Perusahaan Pakaian Sukan Datuk Yi Ying 🎽
+                    </h2>
+
+                    <!-- Cartoon Illustrations Carousel / Image Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white p-3 rounded-2xl border-2 border-amber-300 shadow-sm text-center">
+                            <div class="h-32 bg-red-100 rounded-xl flex items-center justify-center mb-2 overflow-hidden relative">
+                                <span class="text-6xl">🛍️</span>
+                                <span class="absolute top-2 right-2 bg-red-500 text-white font-bold text-xs px-2 py-0.5 rounded-full animate-bounce">
+                                    DISKAUN 50%
+                                </span>
+                            </div>
+                            <span class="font-bold text-xs text-slate-700">1. Galeri Jualan Murah</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-2xl border-2 border-amber-300 shadow-sm text-center">
+                            <div class="h-32 bg-blue-100 rounded-xl flex items-center justify-center mb-2 overflow-hidden">
+                                <span class="text-6xl">🤝</span>
+                            </div>
+                            <span class="font-bold text-xs text-slate-700">2. Tempahan Usahawan Luar Negara</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-2xl border-2 border-amber-300 shadow-sm text-center">
+                            <div class="h-32 bg-green-100 rounded-xl flex items-center justify-center mb-2 overflow-hidden">
+                                <span class="text-6xl">🧵</span>
+                            </div>
+                            <span class="font-bold text-xs text-slate-700">3. Kilang Jahitan (Keselamatan Diutamakan)</span>
+                        </div>
+                    </div>
+
+                    <!-- Story Text Paragraphs -->
+                    <div class="bg-white rounded-2xl p-6 border-2 border-amber-300 text-slate-800 leading-relaxed text-base md:text-lg space-y-4">
+                        <p>
+                            Yi Ying ke 
+                            <button @click="showVocab('galeri')" class="bg-yellow-200 hover:bg-yellow-300 px-2 py-0.5 rounded font-bold text-amber-900 border-b-2 border-yellow-500">
+                                galeri jualan 🏢
+                            </button> 
+                            datuknya. Ketika itu, datuknya sedang mengadakan jualan murah. Pakaian sukan diberikan 
+                            <button @click="showVocab('diskaun')" class="bg-red-200 hover:bg-red-300 px-2 py-0.5 rounded font-bold text-red-900 border-b-2 border-red-500">
+                                diskaun hingga 50 peratus 🏷️
+                            </button>.
+                        </p>
+                        <p>
+                            Banyak pelanggan ke galeri jualan itu. Pada masa yang sama, terdapat 
+                            <button @click="showVocab('usahawan')" class="bg-blue-200 hover:bg-blue-300 px-2 py-0.5 rounded font-bold text-blue-900 border-b-2 border-blue-500">
+                                usahawan 💼
+                            </button> 
+                            dari luar negara yang berminat untuk berurus niaga dengan datuk Yi Ying. Mereka 
+                            <button @click="showVocab('menempah')" class="bg-purple-200 hover:bg-purple-300 px-2 py-0.5 rounded font-bold text-purple-900 border-b-2 border-purple-500">
+                                menempah 📝
+                            </button> 
+                            pakaian sukan daripada datuk Yi Ying untuk dipasarkan di luar negara.
+                        </p>
+                    </div>
+
+                    <!-- Start Quiz Action CTA -->
+                    <div class="mt-6 text-center">
+                        <button @click="activeTab = 'quiz'" class="btn-cartoon-yellow font-extrabold text-lg px-8 py-4 rounded-2xl border-4 border-slate-800 shadow-lg transform hover:scale-105 transition">
+                            🚀 Mulakan Cabaran Soalan KBAT!
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TAB 2: KBAT QUIZ CHALLENGE -->
+            <div v-if="activeTab === 'quiz'" class="space-y-6">
+                
+                <!-- Progress Header -->
+                <div class="bg-white p-4 rounded-3xl border-4 border-slate-800 shadow flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mod Latihan KBAT</span>
+                        <h2 class="text-xl font-bold text-slate-800">Menilai & Memberikan Alasan (Nota Guru 3.2.2)</h2>
+                    </div>
+                    <!-- Question selector tabs -->
+                    <div class="flex space-x-2">
+                        <button 
+                            v-for="(q, idx) in questions" 
+                            :key="q.id"
+                            @click="currentQIndex = idx"
+                            :class="[
+                                currentQIndex === idx ? 'bg-cartoon-blue text-white font-bold border-2 border-slate-800' : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
+                                isQuizCompleted(q.id) ? 'border-2 border-green-500 bg-green-100 text-green-800' : ''
+                            ]"
+                            class="w-10 h-10 rounded-xl font-bold flex items-center justify-center transition">
+                            {{ idx + 1 }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-white rounded-3xl border-4 border-slate-800 p-6 md:p-8 shadow-xl relative">
+                    
+                    <!-- Question Badge -->
+                    <div class="flex items-center justify-between mb-4 border-b-2 border-slate-100 pb-3">
+                        <span class="bg-cartoon-purple text-white font-bold text-sm px-4 py-1 rounded-full border-2 border-slate-800">
+                            Soalan {{ currentQIndex + 1 }} daripada {{ questions.length }}
+                        </span>
+                        <span class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
+                            ⭐ Ganjaran: {{ currentQuestion.points }} Mata
+                        </span>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-6 flex items-start space-x-3">
+                        <div class="text-3xl">❓</div>
+                        <div class="flex-grow">
+                            <h3 class="text-lg md:text-xl font-bold text-slate-800">
+                                {{ currentQuestion.question }}
+                            </h3>
+                            <p class="text-xs text-blue-700 mt-1 font-semibold">
+                                💡 Tip: Sediakan <b>Jawapan</b> dan <b>Alasan</b> yang paling tepat!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Cartoon Visual Hint for current question -->
+                    <div class="mb-6 p-4 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 flex items-center space-x-4">
+                        <div class="text-4xl">{{ currentQuestion.icon }}</div>
+                        <div class="text-sm text-slate-600">
+                            <b>Petunjuk Gambar:</b> {{ currentQuestion.hint }}
+                        </div>
+                    </div>
+
+                    <!-- Options Selector (Jawapan + Alasan combination) -->
+                    <div class="space-y-3 mb-6">
+                        <label class="block font-bold text-slate-700 text-sm">Pilih Padanan Jawapan & Alasan yang betul:</label>
+                        
+                        <div 
+                            v-for="(option, oIdx) in currentQuestion.options" 
+                            :key="oIdx"
+                            @click="selectOption(oIdx)"
+                            :class="[
+                                selectedOption === oIdx ? 'border-cartoon-blue bg-blue-50 ring-4 ring-blue-200' : 'border-slate-200 hover:border-slate-400 bg-white',
+                                submitted && option.isCorrect ? 'bg-green-100 border-green-500' : '',
+                                submitted && selectedOption === oIdx && !option.isCorrect ? 'bg-red-100 border-red-500' : ''
+                            ]"
+                            class="p-4 rounded-2xl border-3 cursor-pointer transition flex items-start space-x-3">
+                            <div class="mt-1">
+                                <input type="radio" :name="'q_' + currentQuestion.id" :checked="selectedOption === oIdx" class="w-5 h-5 text-blue-600">
+                            </div>
+                            <div class="flex-grow">
+                                <div class="font-bold text-slate-800 text-base">
+                                    <span class="text-blue-600">[Jawapan]:</span> {{ option.jawapan }}
+                                </div>
+                                <div class="text-sm text-slate-600 mt-1">
+                                    <span class="text-purple-600 font-semibold">[Alasan]:</span> {{ option.alasan }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Box -->
+                    <div v-if="submitted" class="p-4 rounded-2xl mb-6 border-2" :class="isCurrentCorrect ? 'bg-green-100 border-green-400 text-green-900' : 'bg-red-100 border-red-400 text-red-900'">
+                        <div class="flex items-center space-x-2 font-bold text-lg mb-1">
+                            <i :class="isCurrentCorrect ? 'fa-solid fa-circle-check text-green-600' : 'fa-solid fa-circle-xmark text-red-600'"></i>
+                            <span>{{ isCurrentCorrect ? 'Syabas! Jawapan & Alasan Tepat!' : 'Belum Tepat, Cuba Lagi!' }}</span>
+                        </div>
+                        <p class="text-sm">
+                            {{ currentQuestion.explanation }}
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-between flex-wrap gap-3">
+                        <button 
+                            @click="prevQuestion" 
+                            :disabled="currentQIndex === 0"
+                            class="px-5 py-2.5 rounded-xl border-2 border-slate-700 font-bold bg-slate-100 hover:bg-slate-200 disabled:opacity-50">
+                            👈 Soalan Sebelum
+                        </button>
+
+                        <button 
+                            v-if="!submitted" 
+                            @click="checkAnswer" 
+                            :disabled="selectedOption === null"
+                            class="btn-cartoon-yellow font-extrabold px-8 py-3 rounded-2xl border-2 border-slate-800 disabled:opacity-50">
+                            Semak Jawapan ✨
+                        </button>
+
+                        <button 
+                            v-else 
+                            @click="nextQuestion" 
+                            class="btn-cartoon-blue font-extrabold px-8 py-3 rounded-2xl border-2 border-slate-800">
+                            {{ currentQIndex < questions.length - 1 ? 'Soalan Seterusnya ➡️' : 'Lihat Sijil & Pencapaian 🎉' }}
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TAB 3: MINI SIMULATION GAME -->
+            <div v-if="activeTab === 'sim'" class="space-y-6">
+                
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 text-white border-4 border-slate-800 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <span class="bg-yellow-300 text-slate-900 text-xs font-extrabold px-3 py-1 rounded-full uppercase">Simulasi Interaktif</span>
+                        <h2 class="text-2xl font-bold mt-1">Pengurus Kedai & Kilang Datuk Yi Ying 🏬🧵</h2>
+                        <p class="text-emerald-100 text-sm">
+                            Bantu Datuk Yi Ying menguruskan potongan harga 50% di kedai dan memastikan kilang menjahit baju dengan selamat!
+                        </p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button @click="simMode = 'shop'" :class="simMode === 'shop' ? 'bg-yellow-300 text-slate-900 font-bold' : 'bg-emerald-700 hover:bg-emerald-800 text-white'" class="px-4 py-2 rounded-xl text-sm transition font-bold">
+                            🛍️ Galeri Jualan
+                        </button>
+                        <button @click="simMode = 'factory'" :class="simMode === 'factory' ? 'bg-yellow-300 text-slate-900 font-bold' : 'bg-emerald-700 hover:bg-emerald-800 text-white'" class="px-4 py-2 rounded-xl text-sm transition font-bold">
+                            🧵 Kilang Jahit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SIMULATION 1: GALERI JUALAN DISKAUN -->
+                <div v-if="simMode === 'shop'" class="bg-white rounded-3xl border-4 border-slate-800 p-6 shadow-xl">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 flex items-center space-x-2">
+                        <span>🏷️ Khas: Kira Harga Diskaun 50% untuk Pelanggan</span>
+                    </h3>
+                    <p class="text-sm text-slate-600 mb-6">
+                        Pelanggan mahu membeli pakaian sukan! Kira harga selepas potongan 50 peratus untuk memuaskan hati pelanggan.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <!-- Item display -->
+                        <div class="bg-amber-50 p-6 rounded-2xl border-2 border-amber-300 text-center">
+                            <div class="text-7xl mb-2 animate-bounce">{{ shopItem.emoji }}</div>
+                            <h4 class="font-bold text-lg text-slate-800">{{ shopItem.name }}</h4>
+                            <div class="text-sm text-slate-500">Harga Asal: <span class="line-through font-bold text-red-500">RM {{ shopItem.originalPrice }}</span></div>
+                            <div class="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full mt-2">
+                                DISKAUN 50%
+                            </div>
+                        </div>
+
+                        <!-- Calculation control -->
+                        <div class="space-y-4">
+                            <label class="block font-bold text-slate-700">Berapakah harga selepas Diskaun 50%?</label>
+                            <div class="flex items-center space-x-3">
+                                <span class="font-extrabold text-xl">RM</span>
+                                <input type="number" v-model.number="userPriceInput" placeholder="Masukkan harga" class="w-full text-xl p-3 border-3 border-slate-800 rounded-2xl focus:outline-none focus:ring-4 focus:ring-yellow-300 font-bold">
+                            </div>
+
+                            <button @click="checkDiscount" class="btn-cartoon-green w-full py-3 rounded-2xl font-extrabold text-lg border-2 border-slate-800 shadow">
+                                Jual Kepada Pelanggan! 🛒
+                            </button>
+
+                            <!-- Feedback -->
+                            <div v-if="shopMessage" class="p-3 rounded-xl text-center font-bold text-sm" :class="shopSuccess ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-red-100 text-red-800 border border-red-300'">
+                                {{ shopMessage }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIMULATION 2: KILANG JAHITAN & KESELAMATAN -->
+                <div v-if="simMode === 'factory'" class="bg-white rounded-3xl border-4 border-slate-800 p-6 shadow-xl">
+                    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800 flex items-center space-x-2">
+                                <span>⚠️ Kilang Jahit: "Keselamatan Diutamakan"</span>
+                            </h3>
+                            <p class="text-sm text-slate-600">
+                                Klik pada butang kelajuan untuk menjahit pakaian tempahan usahawan luar negara. Jaga keselamatan pekerja!
+                            </p>
+                        </div>
+                        <div class="bg-red-100 border-2 border-red-400 text-red-800 font-bold px-4 py-1.5 rounded-2xl text-xs flex items-center space-x-1">
+                            <i class="fa-solid fa-shield-halved text-red-600"></i>
+                            <span>KESELAMATAN DIUTAMAKAN</span>
+                        </div>
+                    </div>
+
+                    <!-- Factory Canvas / Interactive area -->
+                    <div class="bg-slate-100 rounded-2xl p-6 border-2 border-slate-300 relative overflow-hidden text-center">
+                        <div class="flex justify-around items-center my-6">
+                            <div class="text-center">
+                                <div class="text-5xl transition transform" :class="isSewing ? 'animate-bounce' : ''">🧕</div>
+                                <span class="text-xs font-bold text-slate-600 block mt-2">Pekerja Jahit</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-5xl transition transform" :class="isSewing ? 'scale-110' : ''">🧵</div>
+                                <span class="text-xs font-bold text-slate-600 block mt-2">Mesin Jahit</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-5xl">👕</div>
+                                <span class="text-xs font-bold text-slate-600 block mt-2">Pakaian Sukan Siap: {{ completedClothes }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress bar -->
+                        <div class="w-full bg-slate-300 h-6 rounded-full overflow-hidden border-2 border-slate-800 mb-4">
+                            <div class="bg-cartoon-green h-full transition-all duration-300" :style="{ width: sewingProgress + '%' }"></div>
+                        </div>
+
+                        <div class="flex justify-center space-x-4">
+                            <button @click="sewShirt" :disabled="isSewing" class="btn-cartoon-yellow px-6 py-3 rounded-2xl font-extrabold border-2 border-slate-800 shadow disabled:opacity-50">
+                                🪡 Jahit Pakaian Sukan
+                            </button>
+                            <button @click="checkSafety" class="btn-cartoon-blue px-6 py-3 rounded-2xl font-extrabold border-2 border-slate-800 shadow">
+                                🥽 Semak Topi & Sarung Tangan Safety
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TAB 4: VOCABULARY FLASHCARDS -->
+            <div v-if="activeTab === 'vocab'" class="space-y-6">
+                
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">Kad Perbendaharaan Kata 📚</h2>
+                    <p class="text-slate-600 text-sm">
+                        Klik pada kad di bawah untuk membalikkan kad dan melihat maksud perkataan keusahawanan!
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div 
+                        v-for="(card, index) in vocabCards" 
+                        :key="index" 
+                        @click="card.flipped = !card.flipped"
+                        :class="{ flipped: card.flipped }"
+                        class="flip-card h-52 cursor-pointer">
+                        
+                        <div class="flip-card-inner w-full h-full relative rounded-3xl shadow-lg border-4 border-slate-800">
+                            <!-- Front -->
+                            <div class="flip-card-front absolute inset-0 bg-white rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+                                <div class="text-4xl mb-2">{{ card.icon }}</div>
+                                <h3 class="text-xl font-bold text-slate-800">{{ card.word }}</h3>
+                                <span class="mt-2 text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full">
+                                    Klik Untuk Maksud 🔄
+                                </span>
+                            </div>
+                            <!-- Back -->
+                            <div class="flip-card-back absolute inset-0 bg-cartoon-blue text-white rounded-2xl p-6 flex flex-col items-center justify-center text-center">
+                                <h4 class="font-extrabold text-lg mb-2 text-yellow-300">{{ card.word }}</h4>
+                                <p class="text-sm leading-snug">{{ card.meaning }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TAB 5: CERTIFICATE & SCORE REPORT -->
+            <div v-if="activeTab === 'cert'" class="space-y-6">
+                
+                <!-- Printable Certificate Container -->
+                <div class="bg-white rounded-3xl border-8 border-amber-400 p-8 text-center shadow-2xl relative max-w-3xl mx-auto">
+                    
+                    <!-- Certificate Corner Badges -->
+                    <div class="absolute top-4 left-4 text-3xl">🌟</div>
+                    <div class="absolute top-4 right-4 text-3xl">🌟</div>
+
+                    <span class="bg-red-500 text-white font-bold text-xs uppercase px-4 py-1 rounded-full">
+                        Sijil Penghargaan Keusahawanan
+                    </span>
+
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800 mt-4">
+                        🏆 USAHAWAN CILIK BIJAK 🏆
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">Sijil ini menganugerahkan kepujian kepada:</p>
+
+                    <!-- Student Name Input / Display -->
+                    <div class="my-6">
+                        <input 
+                            type="text" 
+                            v-model="studentName" 
+                            placeholder="Masukkan Nama Murid Di Sini..." 
+                            class="text-2xl md:text-3xl font-extrabold text-center text-blue-600 border-b-4 border-slate-800 focus:outline-none p-2 w-full max-w-md bg-amber-50 rounded-xl">
+                    </div>
+
+                    <p class="text-slate-700 max-w-lg mx-auto leading-relaxed text-sm md:text-base">
+                        Kerana telah berjaya menyelesaikan unit pembelajaran Bahasa Melayu KBAT 
+                        <b>"Perusahaan Pakaian Sukan Datuk Yi Ying"</b> dengan kemahiran mengemukakan 
+                        <span class="text-blue-600 font-bold">Jawapan dan Alasan yang Mantap!</span>
+                    </p>
+
+                    <!-- Score summary stats -->
+                    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto my-6 bg-amber-50 p-4 rounded-2xl border-2 border-amber-200">
+                        <div>
+                            <span class="block text-xs font-bold text-slate-500">Soalan KBAT</span>
+                            <span class="text-xl font-black text-slate-800">{{ completedQuizzes.length }} / {{ questions.length }}</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-slate-500">Bintang</span>
+                            <span class="text-xl font-black text-yellow-600">{{ totalStars }} ⭐</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-bold text-slate-500">Jumlah Mata</span>
+                            <span class="text-xl font-black text-emerald-600">{{ score }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-end mt-8 pt-6 border-t-2 border-slate-200">
+                        <div class="text-left text-xs text-slate-500">
+                            <b>Anjuran:</b> Modul BM Tahun 5<br>
+                            <b>KBAT:</b> Menilai & Memberikan Alasan
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-cartoon-yellow rounded-full border-2 border-slate-800 mx-auto flex items-center justify-center text-2xl shadow">
+                                🤖
+                            </div>
+                            <span class="text-xs font-bold text-slate-700 block mt-1">Si Bot Penguji</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Print & Share Actions -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button @click="printCertificate" class="btn-cartoon-blue font-extrabold px-8 py-3 rounded-2xl border-2 border-slate-800 shadow-lg">
+                        🖨️ Cetak / Simpan Sijil Saya
+                    </button>
+                    <button @click="openLinkModal" class="btn-cartoon-yellow font-extrabold px-8 py-3 rounded-2xl border-2 border-slate-800 shadow-lg">
+                        🔗 Cipta & Kongsi Pautan Sijil
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Link Generator Modal Popup -->
+        <div v-if="showLinkModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl border-4 border-slate-800 p-6 max-w-lg w-full shadow-2xl relative">
+                <button @click="showLinkModal = false" class="absolute top-4 right-4 w-8 h-8 bg-red-500 text-white font-bold rounded-full border-2 border-slate-800 flex items-center justify-center">
+                    ✕
+                </button>
+
+                <div class="text-center mb-4">
+                    <div class="w-14 h-14 bg-amber-100 rounded-2xl border-2 border-amber-400 mx-auto flex items-center justify-center text-3xl mb-2">
+                        🔗
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">Cipta Pautan Perkongsian</h3>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Jana pautan khas untuk berkongsi nama, mata keusahawanan, dan bintang keputusan anda dengan guru atau rakan!
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Murid:</label>
+                        <input type="text" v-model="studentName" @input="updateGeneratedLink" class="w-full p-2.5 border-2 border-slate-300 rounded-xl font-bold text-slate-800 focus:border-blue-500 focus:outline-none">
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-xl border-2 border-dashed border-slate-300">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Pautan Terjana (URL):</label>
+                        <input type="text" readonly :value="generatedLink" class="w-full bg-white p-2 text-xs font-mono border border-slate-300 rounded-lg text-slate-700 select-all">
+                    </div>
+
+                    <div v-if="copiedNotice" class="bg-green-100 border border-green-400 text-green-800 text-xs font-bold p-2.5 rounded-xl text-center">
+                        ✅ Pautan berjaya disalin ke papan klip (clipboard)!
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button @click="copyShareLink" class="btn-cartoon-green flex-1 py-3 rounded-2xl font-extrabold border-2 border-slate-800 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Salin Pautan</span>
+                        </button>
+                        <button @click="showLinkModal = false" class="px-5 py-3 rounded-2xl font-bold border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vocab Modal Popup -->
+        <div v-if="activeVocabModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl border-4 border-slate-800 p-6 max-w-md w-full shadow-2xl relative animate-float">
+                <button @click="activeVocabModal = null" class="absolute top-4 right-4 w-8 h-8 bg-red-500 text-white font-bold rounded-full border-2 border-slate-800 flex items-center justify-center">
+                    ✕
+                </button>
+                <div class="text-5xl mb-3 text-center">{{ activeVocabModal.icon }}</div>
+                <h3 class="text-2xl font-bold text-center text-slate-800 mb-2">{{ activeVocabModal.word }}</h3>
+                <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200 text-slate-700 text-sm leading-relaxed mb-4">
+                    {{ activeVocabModal.meaning }}
+                </div>
+                <button @click="activeVocabModal = null" class="btn-cartoon-yellow w-full py-2.5 rounded-xl font-bold border-2 border-slate-800">
+                    Faham! 👍
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-slate-800 text-slate-300 py-4 text-center text-xs border-t-4 border-slate-900 mt-8">
+            <p>Aplikasi Permainan Pembelajaran Bahasa Melayu — Berdasarkan Petikan Textbook "Perusahaan Pakaian Sukan Datuk Yi Ying"</p>
+            <p class="text-slate-500 mt-1">KBAT: Menilai & Memberikan Alasan (EK1 Keusahawanan)</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    activeTab: 'story',
+                    score: 0,
+                    totalStars: 0,
+                    studentName: 'Murid Bijak',
+
+                    // Link Sharing State
+                    showLinkModal: false,
+                    generatedLink: '',
+                    copiedNotice: false,
+                    sharedBanner: false,
+
+                    // Full story text for narration
+                    fullStoryText: "Yi Ying ke galeri jualan datuknya. Ketika itu, datuknya sedang mengadakan jualan murah. Pakaian sukan diberikan diskaun hingga 50 peratus. Banyak pelanggan ke galeri jualan itu. Pada masa yang sama, terdapat usahawan dari luar negara yang berminat untuk berurus niaga dengan datuk Yi Ying. Mereka menempah pakaian sukan daripada datuk Yi Ying untuk dipasarkan di luar negara.",
+
+                    // Vocab dictionary popup
+                    activeVocabModal: null,
+                    vocabDict: {
+                        galeri: {
+                            word: 'Galeri Jualan',
+                            icon: '🏢',
+                            meaning: 'Tempat atau bangunan khas untuk memamerkan dan menjual barangan jualan seperti pakaian sukan.'
+                        },
+                        diskaun: {
+                            word: 'Diskaun (Potongan Harga)',
+                            icon: '🏷️',
+                            meaning: 'Pengurangan daripada harga asal barang (contohnya 50%) supaya lebih murah.'
+                        },
+                        usahawan: {
+                            word: 'Usahawan',
+                            icon: '💼',
+                            meaning: 'Orang yang mengusahakan sesuatu perniagaan atau perdagangan.'
+                        },
+                        menempah: {
+                            word: 'Menempah (Pesanan)',
+                            icon: '📝',
+                            meaning: 'Membuat pesanan awal untuk membeli atau menyiapkan barangan pakaian.'
+                        }
+                    },
+
+                    // Questions KBAT (1 to 4 based on textbook page image)
+                    currentQIndex: 0,
+                    selectedOption: null,
+                    submitted: false,
+                    completedQuizzes: [],
+                    questions: [
+                        {
+                            id: 1,
+                            icon: '🏷️',
+                            points: 50,
+                            hint: 'Jualan murah diadakan dengan potongan harga 50% untuk menarik ramai pelanggan.',
+                            question: '1. Mengapakah datuk Yi Ying mengadakan jualan murah di galeri jualannya?',
+                            options: [
+                                {
+                                    jawapan: 'Datuk Yi Ying mengadakan jualan murah untuk menarik minat ramai pelanggan datang ke galeri jualannya.',
+                                    alasan: 'Alasan: Kerana potongan harga hingga 50 peratus menggalakkan orang ramai membeli pakaian sukan dengan lebih murah.',
+                                    isCorrect: true
+                                },
+                                {
+                                    jawapan: 'Datuk Yi Ying mahu menutup galeri jualannya.',
+                                    alasan: 'Alasan: Kerana tiada pelanggan yang sudi datang membeli.',
+                                    isCorrect: false
+                                },
+                                {
+                                    jawapan: 'Datuk Yi Ying mahu memberi pakaian sukan secara percuma sahaja.',
+                                    alasan: 'Alasan: Kerana pakaian itu tidak berkualiti.',
+                                    isCorrect: false
+                                }
+                            ],
+                            explanation: 'Syabas! Jualan murah (diskaun 50%) berfungsi mempromosikan galeri jualan dan menarik perhatian pembeli!'
+                        },
+                        {
+                            id: 2,
+                            icon: '🛍️',
+                            points: 50,
+                            hint: 'Pelanggan gembira kerana dapat jimat wang semasa membeli pakaian sukan.',
+                            question: '2. Banyak pelanggan membeli pakaian sukan di galeri jualan datuk Yi Ying. Jelaskan.',
+                            options: [
+                                {
+                                    jawapan: 'Galeri jualan datuk Yi Ying terletak sangat jauh dari bandar.',
+                                    alasan: 'Alasan: Kerana tiada jalan raya untuk ke sana.',
+                                    isCorrect: false
+                                },
+                                {
+                                    jawapan: 'Banyak pelanggan membeli kerana terdapat potongan harga diskaun hingga 50 peratus dan pakaian sukan itu berkualiti tinggi.',
+                                    alasan: 'Alasan: Pembeli dapat menjimatkan perbelanjaan sambil mendapat barangan sukan yang bagus.',
+                                    isCorrect: true
+                                },
+                                {
+                                    jawapan: 'Pelanggan dipaksa untuk membeli pakaian sukan tersebut.',
+                                    alasan: 'Alasan: Kerana kedai itu merupakan satu-satunya kedai di negara ini.',
+                                    isCorrect: false
+                                }
+                            ],
+                            explanation: 'Tepat sekali! Tawaran diskaun 50% beserta kualiti pakaian sukan yang baik menjadi punca utama ramai pelanggan datang.'
+                        },
+                        {
+                            id: 3,
+                            icon: '🤝',
+                            points: 50,
+                            hint: 'Usahawan luar negara berminat berniaga kerana kualiti dan rekaan pakaian sukan datuk Yi Ying.',
+                            question: '3. Mengapakah usahawan dari luar negara membuat tawaran kepada datuk Yi Ying untuk menyiapkan pakaian sukan?',
+                            options: [
+                                {
+                                    jawapan: 'Kerana pakaian sukan keluaran datuk Yi Ying bermutu tinggi, berkualiti, dan reka bentuknya menarik.',
+                                    alasan: 'Alasan: Usahawan luar negara yakin pakaian tersebut akan mendapat sambutan hangat apabila dipasarkan di negara mereka.',
+                                    isCorrect: true
+                                },
+                                {
+                                    jawapan: 'Kerana usahawan luar negara tiada kilang di negara sendiri.',
+                                    alasan: 'Alasan: Kerana mereka hanya ingin jalan-jalan bercuti.',
+                                    isCorrect: false
+                                },
+                                {
+                                    jawapan: 'Kerana datuk Yi Ying menjahit pakaian secara perlahan-lahan.',
+                                    alasan: 'Alasan: Kerana mereka suka menunggu masa yang lama.',
+                                    isCorrect: false
+                                }
+                            ],
+                            explanation: 'Hebat! Mutu pakaian yang tinggi membina kepercayaan usahawan luar negara untuk berurus niaga.'
+                        },
+                        {
+                            id: 4,
+                            icon: '🧵',
+                            points: 50,
+                            hint: 'Kilang jahitan memerlukan keselamatan pekerja ("Keselamatan Diutamakan") dan pengurusan masa yang baik.',
+                            question: '4. Nyatakan perkara yang perlu dilakukan oleh datuk Yi Ying untuk menyiapkan pesanan pelanggannya. Berikan alasan.',
+                            options: [
+                                {
+                                    jawapan: 'Datuk Yi Ying perlu menutup kilangnya dan berehat panjang.',
+                                    alasan: 'Alasan: Kerana pesanan luar negara terlalu susah untuk disiapkan.',
+                                    isCorrect: false
+                                },
+                                {
+                                    jawapan: 'Datuk Yi Ying perlu menambah pekerja, menyelenggara mesin jahit, serta mengutamakan keselamatan di tempat kerja.',
+                                    alasan: 'Alasan: Langkah ini memastikan pesanan besar dapat disiapkan mengikut tempoh masa tanpa sebarang kemalangan.',
+                                    isCorrect: true
+                                },
+                                {
+                                    jawapan: 'Datuk Yi Ying perlu mengurangkan bilangan pekerja jahitan.',
+                                    alasan: 'Alasan: Supaya kilang menjadi lebih sunyi.',
+                                    isCorrect: false
+                                }
+                            ],
+                            explanation: 'Tepat! Menambah pekerja, menjaga kecekapan mesin dan mengutamakan keselamatan kilang membolehkan tempahan besar disiapkan tepat pada waktunya!'
+                        }
+                    ],
+
+                    // Simulation State
+                    simMode: 'shop',
+                    shopItem: { emoji: '🎽', name: 'Jersi Sukan Kebangsaan', originalPrice: 60 },
+                    userPriceInput: null,
+                    shopMessage: '',
+                    shopSuccess: false,
+
+                    // Factory Simulation State
+                    sewingProgress: 0,
+                    isSewing: false,
+                    completedClothes: 0,
+
+                    // Vocab Cards
+                    vocabCards: [
+                        { word: 'Galeri Jualan', icon: '🏢', meaning: 'Tempat pameran dan jualan barang-barang pakaian sukan.', flipped: false },
+                        { word: 'Diskaun 50%', icon: '🏷️', meaning: 'Potongan separuh harga daripada harga asal barang.', flipped: false },
+                        { word: 'Usahawan', icon: '💼', meaning: 'Peniaga yang bijak merebut peluang perniagaan.', flipped: false },
+                        { word: 'Menempah', icon: '📝', meaning: 'Membuat pesanan awal untuk pembuatan pakaian sukan.', flipped: false },
+                        { word: 'Keselamatan', icon: '🥽', meaning: 'Memastikan suasana kilang selamat daripada sebarang kemalangan.', flipped: false },
+                        { word: 'Dipasarkan', icon: '🌍', meaning: 'Dijual ke pasaran atau tempat lain termasuk luar negara.', flipped: false }
+                    ]
+                }
+            },
+            computed: {
+                currentQuestion() {
+                    return this.questions[this.currentQIndex];
+                },
+                isCurrentCorrect() {
+                    if (this.selectedOption === null) return false;
+                    return this.currentQuestion.options[this.selectedOption].isCorrect;
+                }
+            },
+            methods: {
+                showVocab(key) {
+                    if (this.vocabDict[key]) {
+                        this.activeVocabModal = this.vocabDict[key];
+                        this.playBeep(600, 0.1);
+                    }
+                },
+                selectOption(idx) {
+                    if (this.submitted) return;
+                    this.selectedOption = idx;
+                    this.playBeep(400, 0.05);
+                },
+                checkAnswer() {
+                    if (this.selectedOption === null) return;
+                    this.submitted = true;
+
+                    if (this.isCurrentCorrect) {
+                        this.score += this.currentQuestion.points;
+                        this.totalStars += 1;
+                        if (!this.completedQuizzes.includes(this.currentQuestion.id)) {
+                            this.completedQuizzes.push(this.currentQuestion.id);
+                        }
+                        this.playFanfare();
+                    } else {
+                        this.playBeep(200, 0.2);
+                    }
+                },
+                nextQuestion() {
+                    if (this.currentQIndex < this.questions.length - 1) {
+                        this.currentQIndex++;
+                        this.selectedOption = null;
+                        this.submitted = false;
+                    } else {
+                        this.activeTab = 'cert';
+                    }
+                },
+                prevQuestion() {
+                    if (this.currentQIndex > 0) {
+                        this.currentQIndex--;
+                        this.selectedOption = null;
+                        this.submitted = false;
+                    }
+                },
+                isQuizCompleted(id) {
+                    return this.completedQuizzes.includes(id);
+                },
+
+                // Simulation methods
+                checkDiscount() {
+                    const expectedPrice = this.shopItem.originalPrice / 2;
+                    if (this.userPriceInput === expectedPrice) {
+                        this.shopSuccess = true;
+                        this.shopMessage = `🎉 Tahniah! RM ${expectedPrice} ialah harga tepat selepas diskaun 50%! Pelanggan gembira!`;
+                        this.score += 20;
+                        this.playFanfare();
+                    } else {
+                        this.shopSuccess = false;
+                        this.shopMessage = `❌ Belum tepat! Diskaun 50% daripada RM ${this.shopItem.originalPrice} ialah RM ${expectedPrice}. Cuba lagi!`;
+                        this.playBeep(250, 0.2);
+                    }
+                },
+                sewShirt() {
+                    if (this.isSewing) return;
+                    this.isSewing = true;
+                    this.playBeep(500, 0.1);
+
+                    let interval = setInterval(() => {
+                        this.sewingProgress += 20;
+                        if (this.sewingProgress >= 100) {
+                            clearInterval(interval);
+                            this.sewingProgress = 0;
+                            this.completedClothes++;
+                            this.isSewing = false;
+                            this.score += 15;
+                            this.playBeep(800, 0.15);
+                        }
+                    }, 200);
+                },
+                checkSafety() {
+                    alert('🥽 Pemeriksaan Keselamatan: Pekerja memakai apron dan mesin jahit berfungsi dengan selamat! (Keselamatan Diutamakan)');
+                    this.score += 10;
+                },
+
+                // Speech synthesis
+                speakText(text) {
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.lang = 'ms-MY';
+                        utterance.rate = 0.9;
+                        window.speechSynthesis.speak(utterance);
+                    } else {
+                        alert('Fungsi audio tidak disokong pada pelayar ini.');
+                    }
+                },
+
+                // Sound Effect Generators (Web Audio API - No external sound dependencies)
+                playBeep(freq, duration) {
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start();
+                        gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + duration);
+                        setTimeout(() => ctx.close(), duration * 1000 + 100);
+                    } catch (e) {}
+                },
+                playFanfare() {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, i) => {
+                        setTimeout(() => this.playBeep(freq, 0.15), i * 120);
+                    });
+                },
+
+                // Print Certificate
+                printCertificate() {
+                    window.print();
+                },
+
+                // Link Generator & Sharing Methods
+                openLinkModal() {
+                    this.updateGeneratedLink();
+                    this.showLinkModal = true;
+                    this.copiedNotice = false;
+                },
+                updateGeneratedLink() {
+                    const baseUrl = window.location.origin + window.location.pathname;
+                    const params = new URLSearchParams();
+                    params.set('nama', this.studentName || 'Murid Bijak');
+                    params.set('mata', this.score.toString());
+                    params.set('bintang', this.totalStars.toString());
+                    this.generatedLink = `${baseUrl}?${params.toString()}`;
+                },
+                copyShareLink() {
+                    this.updateGeneratedLink();
+                    const el = document.createElement('textarea');
+                    el.value = this.generatedLink;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+
+                    this.copiedNotice = true;
+                    setTimeout(() => {
+                        this.copiedNotice = false;
+                    }, 3500);
+                }
+            },
+            mounted() {
+                // Auto-read URL parameters if opened via shared link
+                const params = new URLSearchParams(window.location.search);
+                if (params.has('nama')) {
+                    this.studentName = params.get('nama') || 'Murid Bijak';
+                    this.score = parseInt(params.get('mata') || '0', 10);
+                    this.totalStars = parseInt(params.get('bintang') || '0', 10);
+                    this.sharedBanner = true;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
